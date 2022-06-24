@@ -1,2 +1,2 @@
-# zero_costs_nas_rs
-This repository contains code for the conference paper "A Study of Zero-Cost Proxies for Remote Sensing Image Segmentation"
+# A Study of Zero-cost proxies for Remote Sensing Image Segmentation
+The code will be released after all the experiments finished.
