@@ -1,0 +1,69 @@
+_BASE_: "../../../Base-RCNN-DilatedC5.yaml"
+MODEL:
+  META_ARCHITECTURE: "SemanticSegmentor"
+  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+  BACKBONE:
+    FREEZE_AT: 0
+    NAME: "build_resnet_deeplab_backbone"    #  build_resnet_backbone
+  RESNETS:
+    RES4_DILATION: 1
+    RES5_DILATION: 2
+    OUT_FEATURES: [ "res2", "res5" ]
+    RES5_MULTI_GRID: [ 1, 2, 4 ]
+    STEM_TYPE: "deeplab"
+    STEM_OUT_CHANNELS: 64
+  SEM_SEG_HEAD:
+    NAME: "DeepLabV3PlusHead"    # DeepLabV3Head
+    IN_FEATURES: ["res2", "res5"]
+    PROJECT_FEATURES: [ "res2" ]
+    PROJECT_CHANNELS: [ 48 ]
+#    NORM: "SyncBN"
+    NORM: "BN"
+    ASPP_CHANNELS: 256
+    ASPP_DILATIONS: [6, 12, 18]
+    ASPP_DROPOUT: 0.1
+    CONVS_DIM: 256
+    COMMON_STRIDE: 4
+    NUM_CLASSES: 2
+    LOSS_TYPE: "hard_pixel_mining"
+  PIXEL_MEAN: [103.530, 116.280, 123.675]
+  PIXEL_STD: [1.0, 1.0, 1.0]
+DATASETS:
+  TRAIN: ("whu_building_train",)   # "whu_building_train"  mass_road_train
+  TEST: ("whu_building_test",)      # "whu_building_val"   mass_road_val
+SOLVER:
+  CHECKPOINT_PERIOD: 5000
+  BASE_LR: 0.01
+#  MAX_ITER: 59200        # mass_road: 111000 100 epochs   whu_building: 59200 100 epochs
+  MAX_ITER: 101490        # mass_road: 111000 100 epochs   whu_building: 59200 100 epochs
+#  MAX_ITER: 180000
+  LR_SCHEDULER_NAME: "WarmupPolyLR"
+#  IMS_PER_BATCH: 16
+  IMS_PER_BATCH: 8
+  CLIP_GRADIENTS:
+    ENABLED: False
+INPUT:
+  MIN_SIZE_TRAIN: (512, 768)
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  MIN_SIZE_TEST: 512
+  MAX_SIZE_TRAIN: 768
+  MAX_SIZE_TEST: 512
+  CROP:
+    ENABLED: True
+    TYPE: "absolute"
+    SIZE: (512, 512)
+    SINGLE_CATEGORY_MAX_AREA: 1.0
+DATALOADER:
+  NUM_WORKERS: 4
+TEST:
+  EVAL_PERIOD: -1
+
+#OUTPUT_DIR: '/home/albert_wei/fdisk_a/train_output_remote/whu_buildings_deeplabv3_plus/'
+#OUTPUT_DIR: '/home/albert_wei/fdisk_a/train_output_remote/segmentation_output/whu_building_deeplab_v3_plus_100_epochs/'
+
+#OUTPUT_DIR: "/home/albert_wei/fdisk_a/train_output_remote/mass_road_deeplabv3_plus/"
+#OUTPUT_DIR: "/home/albert_wei/fdisk_a/train_output_remote/whu_buildings_deeplabv3_plus/"
+#OUTPUT_DIR: "/home/albert_wei/fdisk_a/train_output_remote/whu_buildings_deeplabv3_plus/"
+OUTPUT_DIR: "/home/albert_wei/fdisk_b/"
+
+SEED: '111'

@@ -1,0 +1,18 @@
+DATASETS:
+  # Classification
+  CIFAR10: ""
+  CIFAR100: ""
+  IMAGENET: ""
+  # Segmentation
+  CITYSCAPES: "/home/albert_wei/fdisk_a/datasets_train_seg/cityscapes/"
+  WUHAN_BUILDINGS: "/home/albert_wei/Disk_A/dataset_train_seg/wuhan_building/"
+  MASS_ROADS: "/home/albert_wei/Disk_A/dataset_train_seg/mass_roads/"
+  AERIAL_IMAGE: "/home/albert_wei/Disk_A/dataset_train_seg/aerial_building/"
+  RODA_TRACER: "/home/albert_wei/Disk_A/dataset_train_seg/RoadTracer/"
+  DEEP_GLOBAL_ROAD: "/home/albert_wei/Disk_A/dataset_train_seg/deep_global/"
+  GID: "/home/albert_wei/Disk_A/dataset_train_seg/GID/"
+
+
+SEARCH_SPACE:
+  NASBENCH_101:
+    TF_FILE_PATH: "/home/albert_wei/Disk_A/dataset_train/nas_bench_101/nasbench_only108.tfrecord"

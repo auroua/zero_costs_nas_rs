@@ -1,0 +1,62 @@
+MODEL:
+  META_ARCHITECTURE: "SemanticSegmentor"
+  WEIGHTS: ""
+  SEARCHED_ARCHITECTURE: "/home/ljm/Fdisk_A/train_outputs/train_output_seg/seg101/searched_model/1e4d24eb52f67424eabfe070ffbaee7ac2f31ca4f2e19a3c87680fbb4ed8167a"
+  BACKBONE:
+    FREEZE_AT: 0
+    NAME: "build_regnet_backbone"    #  build_resnet_backbone build_regnet_mid_backbone
+  REGNETS:
+    TYPE: "400MFX"
+    STEM_TYPE: "simple_stem_in"   # res_stem_in, simple_stem_in
+    STEM_W: 32
+    BLOCK_TYPE: "res_bottleneck_block"
+    STRIDE: 2
+    BOTMUL: 1.0
+    HEAD_W: 0
+    OUT_FEATURES: ["s1", "s2", "s3", "s4"]
+    STAGE_STRIDES: [4, 8, 16, 32]
+    WITH_MID: False
+  SEM_SEG_HEAD:
+    NAME: "NAS"    # DeepLabV3Head, DeepLabV3PlusHead, NAS
+    NORM: "BN"
+#    NORM: "SyncBN"
+    NUM_CLASSES: 19
+    LOSS_TYPE: "hard_pixel_mining"  # cross_entropy, hard_pixel_mining, dice
+    USE_DEPTHWISE_SEPARABLE_CONV: False
+    IGNORE_VALUE: 255
+    LOSS_WEIGHT: 1.0
+  PIXEL_MEAN: [103.530, 116.280, 123.675]
+  PIXEL_STD: [1.0, 1.0, 1.0]
+DATASETS:
+  TRAIN: ("cityscapes_fine_sem_seg_train",)
+  TEST: ("cityscapes_fine_sem_seg_val",)
+SOLVER:
+  CHECKPOINT_PERIOD: 5000
+  BASE_LR: 0.01
+  MAX_ITER: 360000
+  LR_SCHEDULER_NAME: "WarmupPolyLR"
+#  IMS_PER_BATCH: 16
+  IMS_PER_BATCH: 4
+  CLIP_GRADIENTS:
+    ENABLED: False
+  STEPS: (240000, 320000)
+  POLY_LR_POWER: 0.9
+  POLY_LR_CONSTANT_ENDING: 0.0
+INPUT:
+  MIN_SIZE_TRAIN: (512, 768, 1024, 1280, 1536, 1792, 2048)
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  MIN_SIZE_TEST: 1024
+  MAX_SIZE_TRAIN: 4096
+  MAX_SIZE_TEST: 2048
+  CROP:
+    ENABLED: True
+    TYPE: "absolute"
+#    SIZE: (1024, 1024)
+    SIZE: (512, 1024)
+    SINGLE_CATEGORY_MAX_AREA: 1.0
+DATALOADER:
+  NUM_WORKERS: 8
+TEST:
+  EVAL_PERIOD: -1
+
+OUTPUT_DIR: "/home/ljm/Fdisk_A/train_outputs/train_output_seg/seg101/searched_model_seg101_cityscapes/"

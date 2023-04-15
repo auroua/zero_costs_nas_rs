@@ -1,0 +1,58 @@
+MODEL:
+  META_ARCHITECTURE: "SemanticSegmentor"
+  WEIGHTS: ""
+  BACKBONE:
+    FREEZE_AT: 0
+    NAME: "build_regnet_backbone"    #  build_resnet_backbone build_regnet_mid_backbone
+  REGNETS:
+    TYPE: "800MFX"
+    STEM_TYPE: "simple_stem_in"   # res_stem_in, simple_stem_in
+    STEM_W: 32
+    BLOCK_TYPE: "res_bottleneck_block"
+    STRIDE: 2
+    BOTMUL: 1.0
+    HEAD_W: 0
+    OUT_FEATURES: ["s1", "s2", "s3", "s4"]
+    STAGE_STRIDES: [4, 8, 16, 32]
+    WITH_MID: False
+  SEM_SEG_HEAD:
+    NAME: "NAS"    # DeepLabV3Head, DeepLabV3PlusHead, NAS
+    NORM: "BN"
+    NUM_CLASSES: 2
+    LOSS_TYPE: "hard_pixel_mining"  # cross_entropy, hard_pixel_mining, dice
+    USE_DEPTHWISE_SEPARABLE_CONV: False
+    IGNORE_VALUE: -1
+    LOSS_WEIGHT: 1.0
+  PIXEL_MEAN: [103.530, 116.280, 123.675]
+  PIXEL_STD: [1.0, 1.0, 1.0]
+DATASETS:
+  TRAIN: ("mass_road_train",)   # "whu_building_train"  mass_road_train
+  TEST: ("mass_road_val",)      # "whu_building_val"   mass_road_val
+SOLVER:
+  CHECKPOINT_PERIOD: 4038
+  BASE_LR: 0.01
+  MAX_ITER: 80760        # mass_road: 111000 100 epochs   whu_building: 59200 100 epochs
+#  MAX_ITER: 100        # mass_road: 111000 100 epochs   whu_building: 59200 100 epochs
+#  MAX_ITER: 180000
+  LR_SCHEDULER_NAME: "WarmupPolyLR"
+#  IMS_PER_BATCH: 16
+  IMS_PER_BATCH: 32
+  CLIP_GRADIENTS:
+    ENABLED: False
+  POLY_LR_POWER: 0.9
+  POLY_LR_CONSTANT_ENDING: 0.0
+INPUT:
+  MIN_SIZE_TRAIN: (512, 768)
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  MIN_SIZE_TEST: 512
+  MAX_SIZE_TRAIN: 768
+  MAX_SIZE_TEST: 512
+  CROP:
+    ENABLED: True
+    TYPE: "absolute"
+    SIZE: (512, 512)
+    SINGLE_CATEGORY_MAX_AREA: 1.0
+DATALOADER:
+  NUM_WORKERS: 4
+TEST:
+  EVAL_PERIOD: -1

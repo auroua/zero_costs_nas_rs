@@ -1,0 +1,55 @@
+VERSION: 2
+
+SEARCH_SPACE:
+  TYPE: "SEG101"
+  HAS_GT: "N"
+  SEG_101:
+    SPATIAL_OPS: ['Conv2d_3', 'AdaptiveAvgPool_25', 'DilConv_3']   # "Zero"
+    SPATIAL_OPS_S4: ["AdaptiveAvgPool_25", "DilConv_3", "SelfAttention", "SEAttentionStandard_8"]
+    CHANNEL_OPS: ['SEAttention_8']
+    STAGE_SEP_OPS: ['Conv2d_3', 'DilConv_3', 'DilConv_5', 'AdaptiveAvgPool_25', 'AdaptiveAvgPool_75']
+    HEAD_MERGE_OPS: ['GlobalSEHead_8', 'ConcatHeadLayer']
+    SEG_LOSS: 'hard_pixel_mining'   #  ['dice', 'cross_entropy', 'hard_pixel_mining']
+    BACKBONE_STAGES: ["s1", "s2", "s3", "s4"]
+    GROUP_OPTION: 4
+    STAGE_MERGE_OUT_RATIO: 0.5
+    GRAPH_NODE_DIM: 12
+
+SEARCH_STRATEGY:
+  TYPE: "NPENAS"       # NPENAS Random  Evolutionary
+  ALLOW_ISOMORPHISMS: False
+  ENCODE_METHOD: "encode_path"
+  NUM_INIT: 10
+  K: 10
+  SEARCH_BUDGET: 500
+  FIXED_NUM: 200
+  NUM_BEST_ARCHITECTURES: 10
+  CANDIDATE_NUMS: 100
+  MUTATION_RATE: 1.0
+  LOSS_TYPE: "mae"
+  NPENAS:
+    ENGINE: "GINPredictorTrainer"
+
+PREDICTOR:
+  TYPE: "GINPredictor"
+  DIM2: 32
+  NUM_CLASSES: 1
+  RESUME_DIR: ""
+  PRE_TRAIN_METHOD: ""
+
+SOLVER_NAS:
+  EPOCHS: 600
+  BATCH_SIZE: 16
+  LR: 0.005
+  WEIGHT_DEACY: 1e-4
+  RATE: 100.
+  MOMENTUM: 0.9
+  WORKERS: 0
+  COS: True
+
+
+SOLVER_NN:
+  SEG:
+    CONFIG: "../configs/Segmentation/Seg101/Remote-SemanticSegmentation/Base-Seg101-OS16-Semantic-Search.yaml"
+
+SEED: 66

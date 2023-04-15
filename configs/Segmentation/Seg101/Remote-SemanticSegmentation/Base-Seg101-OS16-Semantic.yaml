@@ -1,0 +1,77 @@
+MODEL:
+  META_ARCHITECTURE: "SemanticSegmentor"
+  WEIGHTS: ""
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_30_epochs_liang_computer_6_gpus/ab254a02140bde18350c32567c3bd2d8143e079faf7dc50ac6798ca67c17d053"
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_30_epochs_liang_computer_6_gpus/631d0bad7892268cb034dc4824cf1e47493516eacf2e604f04ba54b8c7625f95"
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_30_epochs_liang_computer_6_gpus/631d0bad7892268cb034dc4824cf1e47493516eacf2e604f04ba54b8c7625f95"
+
+  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_20_epochs_2/1e4d24eb52f67424eabfe070ffbaee7ac2f31ca4f2e19a3c87680fbb4ed8167a"
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_20_epochs_2/1e4d24eb52f67424eabfe070ffbaee7ac2f31ca4f2e19a3c87680fbb4ed8167a"
+
+
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_20_epochs_2/a9f1bfb41e47afba127b448c321bf38ebed19c069d9430b329fbdfeea25b5630"
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_20_epochs_2/d5cc26c5e47757cd4fd022669f224dcb32045786c661d4a4af1f68e9c626fe8f"
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_20_epochs_2/1be18ceeb3135430463521e44ba83cf92b2381477b23816a9bffc9fc1abc7da4"
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_20_epochs_2/48efc1d41247fe573f7afa506241e48f5842ae7c8f340a5db5c4122bd673f625"
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_20_epochs_2/1878dd2df0b9d0403a3d1cfd1ff466a23f4738fe75318d910952438210648ce3"
+#  SEARCHED_ARCHITECTURE: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_20_epochs_2/f733b24a725b8418cec88882e6bdad9340c49e17ba2e4907a7ca9506063ddeab"
+  BACKBONE:
+    FREEZE_AT: 0
+    NAME: "build_regnet_backbone"    #  build_resnet_backbone
+  REGNETS:
+    TYPE: "400MFX"
+    STEM_TYPE: "simple_stem_in"   # res_stem_in, simple_stem_in
+    STEM_W: 32
+    BLOCK_TYPE: "res_bottleneck_block"
+    STRIDE: 2
+    BOTMUL: 1.0
+    HEAD_W: 0
+    OUT_FEATURES: ["s1", "s2", "s3", "s4"]
+    STAGE_STRIDES: [4, 8, 16, 32]
+  SEM_SEG_HEAD:
+    NAME: "NAS"    # DeepLabV3Head, DeepLabV3PlusHead, NAS
+    NORM: "BN"
+    NUM_CLASSES: 2
+    LOSS_TYPE: "hard_pixel_mining"  # cross_entropy, hard_pixel_mining, dice
+    USE_DEPTHWISE_SEPARABLE_CONV: False
+    IGNORE_VALUE: -1
+    LOSS_WEIGHT: 1.0
+  PIXEL_MEAN: [103.530, 116.280, 123.675]
+  PIXEL_STD: [1.0, 1.0, 1.0]
+DATASETS:
+  TRAIN: ("mass_road_train",)   # "whu_building_train"  mass_road_train
+  TEST: ("mass_road_val",)      # "whu_building_val"   mass_road_val
+SOLVER:
+  CHECKPOINT_PERIOD: 5000
+  BASE_LR: 0.01
+  MAX_ITER: 101490        # mass_road: 111000 100 epochs   whu_building: 59200 100 epochs
+#  MAX_ITER: 59200        # mass_road: 111000 100 epochs 8076 images  whu_building: 59200 100 epochs   4736 images
+  LR_SCHEDULER_NAME: "WarmupPolyLR"
+#  IMS_PER_BATCH: 16
+#  IMS_PER_BATCH: 2
+  IMS_PER_BATCH: 32
+  CLIP_GRADIENTS:
+    ENABLED: False
+  POLY_LR_POWER: 0.9
+  POLY_LR_CONSTANT_ENDING: 0.0
+INPUT:
+  MIN_SIZE_TRAIN: (512, 768)
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  MIN_SIZE_TEST: 512
+  MAX_SIZE_TRAIN: 768
+  MAX_SIZE_TEST: 512
+  CROP:
+    ENABLED: True
+    TYPE: "absolute"
+    SIZE: (512, 512)
+    SINGLE_CATEGORY_MAX_AREA: 1.0
+DATALOADER:
+  NUM_WORKERS: 4
+TEST:
+  EVAL_PERIOD: -1
+
+
+#OUTPUT_DIR: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_searched_architecture/"
+#OUTPUT_DIR: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_whu_building_searched_architecture/"
+OUTPUT_DIR: "/home/albert_wei/fdisk_a/train_output_remote/npenas_seg101_mass_road_searched_architecture/"
+#OUTPUT_DIR: "/home/albert_wei/fdisk_b/"
